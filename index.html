@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Livros em foco</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/64b17ba776.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <div class="seller-info">
+        <img src="images/logo_name.png" alt="Logo" width="200px" />
+        <div style="display: flex; align-items: center">
+          <div class="seller-avatar"></div>
+          <div class="seller-name"></div>
+        </div>
+      </div>
+      <div class="search">
+        <input
+          type="search"
+          id="search-field"
+          placeholder="Procure por: Título, autor ou editora"
+        />
+        <button type="button" id="search-btn">Buscar</button>
+      </div>
+    </header>
+
+    <div class="tab">
+      <div class="tablinks" id="livros-tab" onclick="openTab(event, 'Livros')">
+        Livros
+      </div>
+      <div class="tablinks" onclick="openTab(event, 'Resenhas')">Resenhas</div>
+    </div>
+
+    <section>
+      <div id="Livros" class="tabcontent">
+        <h2 id="books-header-text"></h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Ano</th>
+                <th>ISBN</th>
+                <th>Editora</th>
+                <th>Ciar resenha</th>
+              </tr>
+            </thead>
+            <tbody id="book-list"></tbody>
+          </table>
+          <div id="table-spinner" class="spinner" style="display: none"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div id="Resenhas" class="tabcontent">
+        <h2>15 primeiras resenhas</h2>
+        <div class="table-container">
+          <table class="review-table">
+            <thead>
+              <tr>
+                <th>Livro</th>
+                <th>Resenhista</th>
+                <th>Visualizações</th>
+                <th>Avaliação</th>
+                <th>Avaliar</th>
+                <th>Resenha</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Não encontrou o livro?</h2>
+      <h3>Insira os dados do livro que deseja adicionar:</h3>
+      <form id="book-form" class="add-book-container">
+        <div class="add-book-form">
+          <input type="text" id="title" placeholder="Título" required />
+          <input type="text" id="author" placeholder="Autor" required />
+          <input
+            type="number"
+            id="publication_year"
+            placeholder="Ano"
+            required
+          />
+          <input type="text" id="isbn" placeholder="ISBN" required />
+          <input type="text" id="publisher" placeholder="Editora" required />
+        </div>
+        <button type="submit">Adicionar livro</button>
+      </form>
+    </section>
+
+    <div id="ratingModal" class="modal">
+      <div class="modal-content">
+        <div>
+          <span class="close">&times;</span>
+          <h3>Como você avalia esta resenha?</h3>
+        </div>
+        <form id="rating-form">
+          <div id="star-rating" style="text-align: center; margin-bottom: 10px">
+            <label>
+              <input type="radio" name="rating" value="1" /><i
+                class="fas fa-star"
+              ></i>
+            </label>
+            <label>
+              <input type="radio" name="rating" value="2" /><i
+                class="fas fa-star"
+              ></i>
+            </label>
+            <label>
+              <input type="radio" name="rating" value="3" /><i
+                class="fas fa-star"
+              ></i>
+            </label>
+            <label>
+              <input type="radio" name="rating" value="4" /><i
+                class="fas fa-star"
+              ></i>
+            </label>
+            <label>
+              <input type="radio" name="rating" value="5" /><i
+                class="fas fa-star"
+              ></i>
+            </label>
+          </div>
+          <div style="text-align: center">
+            <button type="submit">Enviar avaliação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
