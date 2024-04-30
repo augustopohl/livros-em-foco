@@ -95,7 +95,8 @@ input[type="search"] {
 input[type="email"],
 input[type="text"],
 input[type="number"],
-input[type="password"] {
+input[type="password"],
+textarea {
   position: relative;
   width: 100%;
   padding: 10px;
@@ -103,6 +104,12 @@ input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-family: "Kanit", sans-serif;
+  box-sizing: border-box;
+  resize: none;
+}
+
+textarea {
+  height: 200px;
 }
 
 button {
@@ -319,7 +326,7 @@ th:last-child {
   background-color: #fefefe;
   border-radius: 8px;
   margin: 10% auto;
-  padding: 0 20px 10px 20px;
+  padding: 0 24px 36px 24px;
   width: 40%;
 }
 

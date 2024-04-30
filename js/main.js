@@ -63,18 +63,22 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  var modal = document.getElementById("ratingModal");
-  var span = document.getElementsByClassName("close")[0];
+  var spans = document.getElementsByClassName("close");
 
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
+  for (var i = 0; i < spans.length; i++) {
+    const span = spans[i];
+    const modal = span.parentElement.parentElement.parentElement;
 
-  window.onclick = function (event) {
-    if (event.target == modal) {
+    span.onclick = function () {
       modal.style.display = "none";
-    }
-  };
+    };
+
+    window.onclick = function (event) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+  }
 });
 
 document
@@ -122,6 +126,10 @@ function filterBooks(query) {
 function displayBooks(books) {
   const bookListElement = document.getElementById("book-list");
 
+  for (let i = 0; i < bookListElement.children.length; i++) {
+    bookListElement.children[i].style.display = "none";
+  }
+
   books.forEach((book) => {
     const row = bookListElement.insertRow();
     row.insertCell(0).textContent = book.title;
@@ -142,8 +150,48 @@ function displayBooks(books) {
 }
 
 function reviewBook(bookId) {
-  console.log("Reviewing book with ID:", bookId);
-  // implement the action to review the book
+  const reviewModal = document.getElementById("reviewModal");
+  reviewModal.style.display = "block";
+
+  reviewModal
+    .querySelector("button[type='submit']")
+    .addEventListener("click", async (e) => {
+      e.preventDefault();
+      const reviewData = new FormData(reviewModal.querySelector("form"));
+      const content = reviewData.get("content");
+      const title = reviewData.get("title");
+
+      await postReview(bookId, content, title);
+
+      reviewModal.querySelector("form").reset();
+    });
+}
+
+async function postReview(bookId, content, title) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("http://127.0.0.1:8000/reviews/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      book_id: bookId,
+      content: content,
+      title: title,
+    }),
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    console.error("Failed to post review:", result.detail);
+  }
+
+  document.getElementById("reviewModal").style.display = "none";
+
+  mockResenhasData();
 }
 
 async function fetchBooks() {
@@ -210,48 +258,51 @@ async function postBook(bookData) {
   }
 }
 
-function mockResenhasData() {
+async function mockResenhasData() {
   const resenhasTable = document.querySelector("#Resenhas tbody");
   resenhasTable.innerHTML = "";
 
-  const mockData = [
-    {
-      livro: "1984",
-      resenhista: "João Silva",
-      visualizacoes: 150,
-      avaliacao: 4,
+  const res = await fetch("http://127.0.0.1:8000/reviews/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
-    {
-      livro: "Brave New World",
-      resenhista: "Maria Costa",
-      visualizacoes: 95,
-      avaliacao: 5,
-    },
-    {
-      livro: "To Kill a Mockingbird",
-      resenhista: "Ana Pereira",
-      visualizacoes: 120,
-      avaliacao: 4,
-    },
-  ];
+  });
 
-  mockData.forEach((entry) => {
+  const json = await res.json();
+
+  if (!res.ok) {
+    console.error("Failed to fetch reviews:", json.detail);
+    return;
+  }
+
+  const data = json.reviews.map((review) => ({
+    livro: review.book_title,
+    resenhista: review.author,
+    visualizacoes: parseInt(Math.random() * 1000),
+    avaliacao: review.rating,
+    texto: review.review.content,
+    titulo: review.review.title,
+  }));
+
+  data.forEach((entry) => {
     const row = resenhasTable.insertRow();
     row.insertCell(0).textContent = entry.livro;
     row.insertCell(1).textContent = entry.resenhista;
     row.insertCell(2).textContent = entry.visualizacoes;
-    row.insertCell(3).innerHTML = createStars(entry.avaliacao);
-    const rateCell = row.insertCell(4);
-    const starIcon = document.createElement("i");
-    starIcon.className = "fas fa-star";
-    starIcon.style.cursor = "pointer";
-    starIcon.style.color = "#0a817f";
-    starIcon.onclick = function () {
-      document.getElementById("ratingModal").style.display = "block";
-    };
-    rateCell.appendChild(starIcon);
-    row.insertCell(5).innerHTML =
+    const el = document.createElement("div");
+    el.innerHTML =
       '<i class="fa-solid fa-eye" style="color: #0a817f; cursor: pointer;"></i>';
+
+    el.addEventListener("click", function () {
+      const modal = document.getElementById("viewReviewModal");
+      modal.style.display = "block";
+
+      modal.querySelector("h3").textContent = entry.titulo;
+      modal.querySelector(".content").textContent = entry.texto;
+    });
+
+    row.insertCell(3).appendChild(el);
   });
 }
 
